@@ -10,8 +10,9 @@ describe('Auth flow (e2e)', () => {
   let server: any;
   let accessToken: string;
   let refreshToken: string;
- const uniqueEmail = `authtest+${Date.now()}@ex.com`;
+  let uniqueEmail:string;
   beforeAll(async () => {
+    uniqueEmail = `authtest+${Date.now()}@ex.com`;
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();

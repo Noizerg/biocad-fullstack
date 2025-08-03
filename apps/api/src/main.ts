@@ -14,9 +14,9 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-// @ts-expect-error NestJS types Windows/TS bug
+  // @ts-ignore NestJS types Windows/TS bug
   const document = SwaggerModule.createDocument(app, config);
-  // @ts-expect-error NestJS types Windows/TS bug
+  // @ts-ignore NestJS types Windows/TS bug
   SwaggerModule.setup('swagger', app, document);
   
   await app.listen(process.env.PORT ?? 3001);
