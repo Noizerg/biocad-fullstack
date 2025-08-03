@@ -16,7 +16,9 @@ COPY packages ./packages
 # Устанавливаем все зависимости для монорепы
 RUN pnpm install --frozen-lockfile
 
-# (!) КОСТЫЛЬ — копируем NestJS CLI в node_modules текущего пакета,
+# Генерируем Prisma Client
+RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
+
 # чтобы он был доступен как бинарник внутри пакета (fix для Docker+pnpm+Windows)
 RUN mkdir -p /app/apps/api/node_modules/@nestjs/cli && cp -r /app/node_modules/@nestjs/cli/* /app/apps/api/node_modules/@nestjs/cli/
 
