@@ -1,11 +1,11 @@
-import { Controller, Post, Body, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, UnauthorizedException, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto, RegisterDtoSwagger } from './dto/register.dto';
 
 import { LoginDto, LoginDtoSwagger } from './dto/login.dto';
 import { RefreshDto, RefreshDtoSwagger } from './dto/refresh.dto';
 import type {RegisterDtoType} from './dto/register.dto';
-
+import express from 'express'; 
 import type { LoginDtoType } from './dto/login.dto';
 import { ApiBody } from '@nestjs/swagger';
 @Controller('auth')
@@ -13,20 +13,28 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-   @ApiBody({ type: RegisterDtoSwagger })
-  async register(@Body() body:RegisterDtoType) {
+  @ApiBody({ type: RegisterDtoSwagger })
+  async register(
+    @Body() body: RegisterDtoType,
+    @Res({ passthrough: true }) response: express.Response,
+  ) {
     try {
-      const parsed = RegisterDto.parse(body);
-      return await this.authService.register(parsed);
+      const parsed = RegisterDto.parse(body)
+      const user = await this.authService.register(parsed)
+      const tokens = await this.authService.generateTokens({ userId: user.id, email: user.email })
+      this.setAuthCookies(response, tokens.accessToken, tokens.refreshToken)
+      return { ok: true, user: { id: user.id, email: user.email } }
     } catch (e) {
-      // Zod ошибки — массив .errors, остальные — .message
-      throw new BadRequestException(e.errors || e.message);
+      throw new BadRequestException(e.errors || e.message)
     }
   }
 
 @Post('login')
-  @ApiBody({ type: LoginDtoSwagger })
-async login(@Body() body: LoginDtoType) {
+@ApiBody({ type: LoginDtoSwagger })
+async login(
+  @Body() body: LoginDtoType,
+  @Res({ passthrough: true }) response: express.Response,  
+) {
   try {
     const parsed = LoginDto.parse(body);
 
@@ -38,20 +46,56 @@ async login(@Body() body: LoginDtoType) {
       email: user.email,
     });
 
-    return tokens;
+    this.setAuthCookies(response, tokens.accessToken, tokens.refreshToken)
+
+    return { ok: true, user: { id: user.id, email: user.email } };
   } catch (e) {
     throw new BadRequestException(e.errors || e.message);
   }
 }
+
 @Post('refresh')
 @ApiBody({ type: RefreshDtoSwagger })
-async refresh(@Body() body: unknown) {
+async refresh(
+  @Body() body: unknown,
+  @Res({ passthrough: true }) response: express.Response,
+) {
   try {
     const parsed = RefreshDto.parse(body);
-    return await this.authService.refresh(parsed.refreshToken);
+    const tokens = await this.authService.refresh(parsed.refreshToken);
+
+    // Обновляем куки с новыми токенами!
+    this.setAuthCookies(response, tokens.accessToken, tokens.refreshToken);
+
+    return { ok: true };
   } catch (e) {
     throw new BadRequestException(e.errors || e.message);
   }
 }
+
+@Post('logout')
+async logout(@Res({ passthrough: true }) response: express.Response) {
+  response.clearCookie('accessToken', { path: '/' });
+  response.clearCookie('refreshToken', { path: '/' });
+  return { ok: true };
+}
+
+
+private setAuthCookies(response: express.Response, accessToken: string, refreshToken: string) {
+    response.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 15 * 60 * 1000,
+      path: '/',
+    })
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/',
+    })
+  }
 
 }

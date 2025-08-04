@@ -59,8 +59,9 @@ export class AuthService {
         { userId: payload.userId, email: payload.email },
         { expiresIn: '15m' }
       );
+      const newRefreshToken = this.jwtService.sign({ userId: payload.userId, email: payload.email }, { expiresIn: '7d' });
       // Вернуть новый access токен (и, если хочешь, новый refreshToken)
-      return { accessToken };
+      return { accessToken, refreshToken: newRefreshToken };
     } catch (e) {
       throw new UnauthorizedException('Invalid refresh token');
     }
