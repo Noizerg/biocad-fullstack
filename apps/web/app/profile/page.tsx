@@ -9,11 +9,12 @@ export default async function ProfilePage() {
     redirect("/");
   }
 
-  const res = await fetch("http://localhost:5001/users/me", {
+  const res = await fetch("http://api:5001/users/me", {
     headers: { Authorization: `Bearer ${accessToken}` },
 
     cache: "no-store",
   });
+
   if (!res.ok) {
     redirect("/");
   }

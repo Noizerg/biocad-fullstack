@@ -10,7 +10,7 @@ export default async function UsersPage() {
     redirect("/");
   }
 
-  const res = await fetch("http://localhost:5001/users", {
+  const res = await fetch("http://api:5001/users", {
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
   });
