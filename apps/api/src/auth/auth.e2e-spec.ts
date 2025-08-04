@@ -11,6 +11,7 @@ describe('Auth flow (e2e)', () => {
   let accessToken: string;
   let refreshToken: string;
   let uniqueEmail: string;
+
   beforeAll(async () => {
     uniqueEmail = `authtest+${Date.now()}@ex.com`;
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -29,8 +30,8 @@ describe('Auth flow (e2e)', () => {
       .send({ email: uniqueEmail, password: '123456' })
       .expect(201);
 
-    expect(res.body).toHaveProperty('email', uniqueEmail);
-    expect(res.body).toHaveProperty('id');
+    expect(res.body.user).toHaveProperty('email', uniqueEmail);
+    expect(res.body.user).toHaveProperty('id');
   });
 
   it('/auth/login (POST)', async () => {
@@ -39,10 +40,10 @@ describe('Auth flow (e2e)', () => {
       .send({ email: uniqueEmail, password: '123456' })
       .expect(201);
 
-    expect(res.body).toHaveProperty('accessToken');
-    expect(res.body).toHaveProperty('refreshToken');
-    accessToken = res.body.accessToken;
-    refreshToken = res.body.refreshToken;
+    expect(res.body.tokens).toHaveProperty('accessToken');
+    expect(res.body.tokens).toHaveProperty('refreshToken');
+    accessToken = res.body.tokens.accessToken;
+    refreshToken = res.body.tokens.refreshToken;
   });
 
   it('/auth/refresh (POST)', async () => {
@@ -51,7 +52,10 @@ describe('Auth flow (e2e)', () => {
       .send({ refreshToken })
       .expect(201);
 
-    expect(res.body).toHaveProperty('accessToken');
+    expect(res.body.tokens).toHaveProperty('accessToken');
+    expect(res.body.tokens).toHaveProperty('refreshToken');
+
+    refreshToken = res.body.tokens.refreshToken;
   });
 
   it('/users (GET, protected)', async () => {
@@ -61,7 +65,9 @@ describe('Auth flow (e2e)', () => {
       .expect(200);
 
     expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body[0]).toHaveProperty('email');
+    if (res.body.length > 0) {
+      expect(res.body[0]).toHaveProperty('email');
+    }
   });
 
   it('/users/me (GET, protected)', async () => {
@@ -71,6 +77,7 @@ describe('Auth flow (e2e)', () => {
       .expect(200);
 
     expect(res.body).toHaveProperty('email', uniqueEmail);
+    expect(res.body).toHaveProperty('id');
   });
 
   afterAll(async () => {

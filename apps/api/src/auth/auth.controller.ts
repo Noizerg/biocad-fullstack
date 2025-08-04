@@ -61,7 +61,14 @@ export class AuthController {
 
       this.setAuthCookies(response, tokens.accessToken, tokens.refreshToken);
 
-      return { ok: true, user: { id: user.id, email: user.email } };
+      return {
+        ok: true,
+        user: { id: user.id, email: user.email },
+        tokens: {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+        },
+      };
     } catch (e) {
       throw new BadRequestException(e.errors || e.message);
     }
@@ -79,7 +86,13 @@ export class AuthController {
 
       this.setAuthCookies(response, tokens.accessToken, tokens.refreshToken);
 
-      return { ok: true };
+      return {
+        ok: true,
+        tokens: {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+        },
+      };
     } catch (e) {
       throw new BadRequestException(e.errors || e.message);
     }

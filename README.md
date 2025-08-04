@@ -1,135 +1,104 @@
-# Turborepo starter
+# BioCad Fullstack Test Task
 
-This Turborepo starter is maintained by the Turborepo core team.
+Fullstack-приложение на базе **React + Next.js 15 (App Router) + NestJS + TypeScript + Prisma + PostgreSQL + Redis + Docker**.
 
-## Using this example
+## Features
 
-Run the following command:
+- JWT авторизация (access/refresh токены)
+- SSR там, где оправдано (Next.js)
+- HttpOnly cookies для хранения токенов
+- REST API, кэширование (Redis или память)
+- Инфраструктура: Turborepo, Docker, docker-compose
+- E2E тесты на Jest + Supertest
+- Swagger UI
 
-```sh
-npx create-turbo@latest
+---
+
+## Запуск проекта в Docker
+
+> **Требования:**
+>
+> - Docker и Docker Compose (Compose V2, встроен в Docker Desktop)
+> - 4+ GB RAM для корректной работы всего стека
+
+### 1. Клонируйте репозиторий
+
+```bash
+git clone https://github.com/Noizerg/biocad-fullstack.git
+cd biocad-fullstack
 ```
 
-## What's inside?
+### 2. Скопируйте .env
 
-This Turborepo includes the following packages/apps:
+В каталоге `apps/api` должен быть файл `.env` (см. пример в `.env.example`).  
+Если его нет — создайте вручную и укажите параметры для базы, JWT и пр.
 
-### Apps and Packages
+### 3. Соберите и запустите сервисы
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+docker-compose up --build
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+- Это поднимет контейнеры:
+  - **api** (NestJS backend, порт 5000)
+  - **web** (Next.js frontend, порт 3000)
+  - **postgres** (порт 5432)
+  - **redis** (порт 6379)
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### 4. Миграции Prisma (если нужно вручную)
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+Обычно миграция и генерация клиентских моделей происходят при запуске, но если нужно вручную:
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+```bash
+docker-compose exec api npx prisma migrate deploy
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+## Доступные URL
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend API: [http://localhost:5000](http://localhost:5000)
+- Swagger UI: [http://localhost:5000/swagger](http://localhost:5000/swagger)
+- PostgreSQL: `localhost:5432`, пользователь/пароль: `postgres/postgres`
+- Redis: `localhost:6379`
 
-### Remote Caching
+---
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## Запуск тестов в контейнере
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### 1. Поднять контейнеры (если ещё не запущены)
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+```bash
+docker-compose up -d
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### 2. Выполнить тесты внутри контейнера `api`
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+```bash
+docker-compose exec api pnpm test
 ```
 
-## Useful Links
+- Для e2e тестов используется Jest + Supertest.
+- По умолчанию используется dev-база из контейнера `postgres`.
 
-Learn more about the power of Turborepo:
+---
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+## Примеры основных команд
+
+- **Собрать и запустить всё:**  
+  `docker-compose up --build`
+- **Остановить контейнеры:**  
+  `docker-compose down`
+- **Зайти внутрь контейнера API:**  
+  `docker-compose exec api sh`
+- **Запустить миграции вручную:**  
+  `docker-compose exec api npx prisma migrate deploy`
+- **Прогнать тесты:**  
+  `docker-compose exec api pnpm test`
+
+---
+
+## License
+
+SgtNick
