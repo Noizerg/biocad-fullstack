@@ -5,7 +5,6 @@ export default async function ProfilePage() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
-  console.log("accessToken", accessToken);
   if (!accessToken) {
     redirect("/");
   }

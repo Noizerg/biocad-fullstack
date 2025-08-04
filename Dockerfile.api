@@ -15,9 +15,13 @@ RUN pnpm install --frozen-lockfile
 
 RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 
 RUN mkdir -p /app/apps/api/node_modules/@nestjs/cli && cp -r /app/node_modules/@nestjs/cli/* /app/apps/api/node_modules/@nestjs/cli/
 
 WORKDIR /app/apps/api
 
-CMD ["pnpm", "exec", "nest", "start", "--watch"]
+
+CMD ["/entrypoint.sh"]
