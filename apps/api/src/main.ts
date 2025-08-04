@@ -8,11 +8,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-    app.enableCors({
-    origin: ['http://localhost:3000','http://localhost:3003', 'http://localhost:3005', 'http://web:3000'], 
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3003',
+      'http://localhost:3005',
+      'http://web:3000',
+    ],
     credentials: true,
   });
-   const config = new DocumentBuilder()
+  const config = new DocumentBuilder()
     .setTitle('BioCad Fullstack API')
     .setDescription('API docs for BioCad fullstack test task')
     .setVersion('1.0')
@@ -22,7 +27,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   // @ts-ignore NestJS types Windows/TS bug
   SwaggerModule.setup('swagger', app, document);
-  
+
   await app.listen(process.env.PORT ?? 5000, '0.0.0.0');
 }
 bootstrap();

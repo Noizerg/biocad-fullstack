@@ -1,8 +1,7 @@
-
 import { Global, Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 
-@Global() 
+@Global()
 @Module({
   imports: [
     CacheModule.register({

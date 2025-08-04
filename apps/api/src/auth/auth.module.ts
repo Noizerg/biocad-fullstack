@@ -6,12 +6,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
-    imports: [PrismaModule, JwtModule.register({
+  imports: [
+    PrismaModule,
+    JwtModule.register({
       secret: process.env.JWT_SECRET || 'supersecret',
       signOptions: { expiresIn: '15m' },
-    }),SharedModule],
+    }),
+    SharedModule,
+  ],
   providers: [AuthService],
   controllers: [AuthController],
-    exports: [AuthService, JwtModule],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

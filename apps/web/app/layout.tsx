@@ -7,9 +7,8 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 import { getUserFromToken } from "./lib/auth";
-import { useState } from "react";
 import LogoutButton from "@/components/ui/LogoutButton";
 
 const geistSans = localFont({
@@ -31,36 +30,35 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
- const user = await getUserFromToken(); 
+  const user = await getUserFromToken();
   const isLoggedIn = !!user;
 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-    <NavigationMenu>
+        <NavigationMenu>
           <NavigationMenuList>
-  
-            {isLoggedIn && (<><NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/profile">Profile</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem><NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/users">Users</Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-               <NavigationMenuItem>
+            {isLoggedIn && (
+              <>
+                <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-  <Link href="/"><LogoutButton /></Link>
-                     
-      
+                    <Link href="/profile">Profile</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
-                </>)}
-   
-
-            
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link href="/users">Users</Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link href="/">
+                      <LogoutButton />
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </>
+            )}
           </NavigationMenuList>
         </NavigationMenu>
         <main>{children}</main>

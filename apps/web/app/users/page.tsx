@@ -1,23 +1,23 @@
 // apps/web/app/users/page.tsx
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function UsersPage() {
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get('accessToken')?.value
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
 
   if (!accessToken) {
-    redirect('/')
+    redirect("/");
   }
 
-  const res = await fetch('http://localhost:5000/users', {
+  const res = await fetch("http://localhost:5000/users", {
     headers: { Authorization: `Bearer ${accessToken}` },
-    cache: 'no-store',
-  })
+    cache: "no-store",
+  });
   if (!res.ok) {
-    redirect('/')
+    redirect("/");
   }
-  const users = await res.json()
+  const users = await res.json();
 
   return (
     <div className="max-w-2xl mx-auto p-8">
@@ -31,5 +31,5 @@ export default async function UsersPage() {
         ))}
       </ul>
     </div>
-  )
+  );
 }

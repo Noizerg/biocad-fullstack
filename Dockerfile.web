@@ -1,26 +1,24 @@
 FROM node:20
 
-# Устанавливаем pnpm глобально
+
 RUN npm install -g pnpm
 
-# Создаём рабочую директорию
 WORKDIR /app
 
-# Копируем все базовые файлы монорепозитория
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY .npmrc .npmrc
 
-# Копируем все приложения и пакеты целиком (!!!)
+
 COPY apps ./apps
 COPY packages ./packages
 
-# Устанавливаем все зависимости (для всего монорепо)
+
 RUN pnpm install --frozen-lockfile
 
-# Принудительно кладём next в node_modules web-пакета (решает проблему с бинарниками)
+
 RUN cd apps/web && pnpm add next
 
-# Переключаемся в директорию веба
 WORKDIR /app/apps/web
 
 RUN mkdir -p /app/apps/web/node_modules/next && cp -r /app/node_modules/next/* /app/apps/web/node_modules/next/

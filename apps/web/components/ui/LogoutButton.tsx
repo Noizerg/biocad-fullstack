@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 export default function LogoutButton() {
   const handleLogout = async () => {
-    await fetch('http://localhost:5000/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
+    await fetch("http://localhost:5000/auth/logout", {
+      method: "POST",
+      credentials: "include",
     });
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   return (

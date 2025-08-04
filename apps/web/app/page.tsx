@@ -1,53 +1,53 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
     const url = isLogin
-      ? 'http://localhost:5000/auth/login'
-      : 'http://localhost:5000/auth/register'
+      ? "http://localhost:5000/auth/login"
+      : "http://localhost:5000/auth/register";
 
     try {
       const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Ошибка авторизации')
+        throw new Error(data.message || "Ошибка авторизации");
       }
-      window.location.href = '/profile'
+      window.location.href = "/profile";
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted px-4">
@@ -55,12 +55,12 @@ export default function AuthPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">
-              {isLogin ? 'Login' : 'Register'}
+              {isLogin ? "Login" : "Register"}
             </CardTitle>
             <CardDescription>
               {isLogin
-                ? 'Enter your email and password to log in.'
-                : 'Create a new account to get started.'}
+                ? "Enter your email and password to log in."
+                : "Create a new account to get started."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -92,11 +92,11 @@ export default function AuthPage() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading
                   ? isLogin
-                    ? 'Logging in...'
-                    : 'Registering...'
+                    ? "Logging in..."
+                    : "Registering..."
                   : isLogin
-                  ? 'Login'
-                  : 'Register'}
+                    ? "Login"
+                    : "Register"}
               </Button>
               <Button
                 type="button"
@@ -106,12 +106,12 @@ export default function AuthPage() {
               >
                 {isLogin
                   ? "Don't have an account? Register"
-                  : 'Already have an account? Login'}
+                  : "Already have an account? Login"}
               </Button>
             </form>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

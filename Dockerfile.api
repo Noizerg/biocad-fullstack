@@ -1,28 +1,23 @@
 FROM node:20
 
-# Установка pnpm глобально
 RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Копируем основные файлы монорепозитория
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY .npmrc .npmrc
 
-# Копируем все приложения и пакеты целиком
 COPY apps ./apps
 COPY packages ./packages
 
-# Устанавливаем все зависимости для монорепы
+
 RUN pnpm install --frozen-lockfile
 
-# Генерируем Prisma Client
 RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
 
-# чтобы он был доступен как бинарник внутри пакета (fix для Docker+pnpm+Windows)
+
 RUN mkdir -p /app/apps/api/node_modules/@nestjs/cli && cp -r /app/node_modules/@nestjs/cli/* /app/apps/api/node_modules/@nestjs/cli/
 
 WORKDIR /app/apps/api
 
-# Запускаем Nest через pnpm exec — так он всегда найдёт бинарник
 CMD ["pnpm", "exec", "nest", "start", "--watch"]

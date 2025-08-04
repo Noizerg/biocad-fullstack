@@ -5,7 +5,10 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService, @Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   async findAll() {
     const cached = await this.cacheManager.get('users');
@@ -18,15 +21,14 @@ export class UsersService {
         id: true,
         email: true,
         createdAt: true,
-      }
-    })
+      },
+    });
     await this.cacheManager.set('users', users, 300);
 
     return users;
   }
 
   async findByEmail(email: string) {
-
     const cacheKey = `user:email:${email}`;
     const cached = await this.cacheManager.get(cacheKey);
     if (cached) return cached;
@@ -34,7 +36,7 @@ export class UsersService {
     const user = this.prisma.user.findUnique({
       where: { email },
     });
-      if (user) {
+    if (user) {
       await this.cacheManager.set(cacheKey, user, 60 * 5);
     }
     return user;
@@ -48,7 +50,7 @@ export class UsersService {
     const user = this.prisma.user.findUnique({
       where: { id },
     });
-  
+
     if (user) {
       await this.cacheManager.set(cacheKey, user, 60 * 5);
     }

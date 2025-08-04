@@ -8,7 +8,6 @@ export const RegisterDto = z.object({
 
 export type RegisterDtoType = z.infer<typeof RegisterDto>;
 
-
 export class RegisterDtoSwagger {
   @ApiProperty({ example: 'user@example.com' })
   email: string;
