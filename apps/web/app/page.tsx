@@ -26,8 +26,8 @@ export default function AuthPage() {
     setLoading(true);
 
     const url = isLogin
-      ? "http://localhost:5000/auth/login"
-      : "http://localhost:5000/auth/register";
+      ? "http://localhost:5001/auth/login"
+      : "http://localhost:5001/auth/register";
 
     try {
       const res = await fetch(url, {

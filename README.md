@@ -40,7 +40,7 @@ docker-compose up --build
 ```
 
 - Это поднимет контейнеры:
-  - **api** (NestJS backend, порт 5000)
+  - **api** (NestJS backend, порт 5001)
   - **web** (Next.js frontend, порт 3000)
   - **postgres** (порт 5432)
   - **redis** (порт 6379)
@@ -58,8 +58,8 @@ docker-compose exec api npx prisma migrate deploy
 ## Доступные URL
 
 - Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend API: [http://localhost:5000](http://localhost:5000)
-- Swagger UI: [http://localhost:5000/swagger](http://localhost:5000/swagger)
+- Backend API: [http://localhost:5001](http://localhost:5001)
+- Swagger UI: [http://localhost:5001/swagger](http://localhost:5001/swagger)
 - PostgreSQL: `localhost:5432`, пользователь/пароль: `postgres/postgres`
 - Redis: `localhost:6379`
 

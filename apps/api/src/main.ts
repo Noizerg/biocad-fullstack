@@ -28,6 +28,6 @@ async function bootstrap() {
   // @ts-ignore NestJS types Windows/TS bug
   SwaggerModule.setup('swagger', app, document);
 
-  await app.listen(process.env.PORT ?? 5000, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 5001, '0.0.0.0');
 }
 bootstrap();
